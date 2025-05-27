@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>مشهد طائرة ورقية وسحب كثيرة متجاوب للجوال</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #87ceeb;
+    }
+    .overlay {
+      position: fixed;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.97);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Arial', sans-serif;
+      transition: opacity 0.7s;
+    }
+    .overlay.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .ready-text {
+      font-size: 2.2em;
+      color: #222;
+      margin-bottom: 18px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 10px #fff, 0 0 3px #87ceeb;
+    }
+    .countdown-num {
+      font-size: 3.2em;
+      color: #2196f3;
+      font-weight: bold;
+      text-shadow: 0 4px 24px #87ceeb99;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .sky {
+      position: absolute;
+      width: 95vw;
+      height: 60vw;
+      max-width: 100vw;
+      max-height: 100vh;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(to bottom, #87ceeb 0%, #fff 100%);
+      border-radius: 18px;
+      box-shadow: 0 4px 32px #0002;
+      overflow: hidden;
+    }
+    .cloud {
+      position: absolute;
+      opacity: 0.85;
+      user-select: none;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .big-cloud { font-size: 7vw; }
+    .small-cloud { font-size: 3vw; }
+    .scene-img {
+      position: absolute;
+      width: 12vw;
+      min-width: 60px;
+      max-width: 120px;
+      height: 12vw;
+      min-height: 60px;
+      max-height: 120px;
+      object-fit: cover;
+      border-radius: 22px;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 24px #0003;
+      z-index: 3;
+      background: #eee;
+      opacity: 0;
+      transition: opacity 0.7s;
+      pointer-events: none;
+      left: 50vw; top: 50vh;
+      transform: translate(-50%, -50%);
+    }
+    .scene-img.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .kite-img {
+      position: absolute;
+      width: 8vw;
+      min-width: 50px;
+      max-width: 100px;
+      filter: drop-shadow(0 2px 12px #aaa8);
+      user-select: none;
+      z-index: 10;
+      left: 0; top: 0;
+      transition: transform 0.18s;
+      pointer-events: none;
+    }
+    .title {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 1.1em;
+      color: #333;
+      text-shadow: 1px 1px 10px #fff, 0 0 3px #87ceeb;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+  <!-- العد التنازلي -->
+  <div class="overlay" id="countdownOverlay">
+    <div class="ready-text">Are you ready?</div>
+    <div class="countdown-num" id="countdownNum">3</div>
+  </div>
+
+  <div class="sky" id="sky">
+    <!-- سحب كثيرة بأحجام مختلفة وثابتة (إيموجي) -->
+    <span class="cloud big-cloud" style="top:8vh; left:10vw;">☁️</span>
+    <span class="cloud small-cloud" style="top:13vh; left:22vw;">☁️</span>
+    <span class="cloud big-cloud" style="top:10vh; left:60vw;">☁️</span>
+    <span class="cloud small-cloud" style="top:18vh; left:80vw;">☁️</span>
+    <span class="cloud big-cloud" style="top:27vh; left:20vw;">☁️</span>
+    <span class="cloud small-cloud" style="top:36vh; left:70vw;">☁️</span>
+    <span class="cloud big-cloud" style="top:41vh; left:15vw;">☁️</span>
+    <span class="cloud small-cloud" style="top:50vh; left:55vw;">☁️</span>
+    <span class="cloud big-cloud" style="top:53vh; left:85vw;">☁️</span>
+    <span class="cloud small-cloud" style="top:20vh; left:45vw;">☁️</span>
+    <span class="cloud big-cloud" style="top:35vh; left:33vw;">☁️</span>
+    <span class="cloud small-cloud" style="top:45vh; left:80vw;">☁️</span>
+    <!-- الصور: اثنتان فوق واثنتان تحت -->
+    <img src="https://pplx-res.cloudinary.com/image/private/user_uploads/71429067/978bd8f9-475a-4d89-a0f9-856477bae87a/png-clipart-cartoon-hand-painted-paper-plane-cartoon-paper-hand-painted-paper.jpg" class="scene-img" id="img0">
+    <img src="https://pplx-res.cloudinary.com/image/private/user_uploads/71429067/9df0fd38-9a10-40ff-a066-e32b1c985096/Picsart_24-11-09_21-49-43-460.jpg" class="scene-img" id="img1">
+    <img src="https://pplx-res.cloudinary.com/image/private/user_uploads/71429067/1642e0d8-0bf4-4146-852a-b1ddf7a785e5/Picsart_25-05-02_19-10-45-521.jpg" class="scene-img" id="img2">
+    <img src="https://pplx-res.cloudinary.com/image/private/user_uploads/71429067/7b95f053-a18f-4e16-b7d4-da35a3f5f845/received_1436706623392660.jpg" class="scene-img" id="img3">
+    <!-- الطائرة الورقية (من ملف images/plane.png) -->
+    <img src="images/plane.png" class="kite-img" id="kite" alt="Paper Plane">
+    <h1 class="title">حرك الطائرة الورقية يمينًا ويسارًا باللمس أو الماوس!</h1>
+  </div>
+  <script>
+    // العد التنازلي
+    let seconds = 3;
+    const overlay = document.getElementById('countdownOverlay');
+    const countdownNum = document.getElementById('countdownNum');
+    countdownNum.textContent = seconds;
+    let countdownDone = false;
+
+    let countdownInterval = setInterval(() => {
+      seconds--;
+      if (seconds > 0) {
+        countdownNum.textContent = seconds;
+      } else {
+        countdownNum.textContent = "GO!";
+        setTimeout(() => {
+          overlay.classList.add('hide');
+          setTimeout(() => overlay.style.display = "none", 700);
+          countdownDone = true;
+        }, 700);
+        clearInterval(countdownInterval);
+      }
+    }, 1000);
+
+    // أماكن الصور: اثنتان فوق واثنتان تحت، متباعدات عرضيًا
+    function getImgPositions() {
+      const sky = document.getElementById('sky');
+      const skyRect = sky.getBoundingClientRect();
+      const upY = skyRect.height * 0.23 - 60;
+      const downY = skyRect.height * 0.77 - 60;
+      const total = 4;
+      const gap = skyRect.width / (total + 1);
+      return [
+        {x: gap*1 - 60, y: upY},    // فوق يسار
+        {x: gap*2 - 60, y: downY},  // تحت يسار
+        {x: gap*3 - 60, y: upY},    // فوق يمين
+        {x: gap*4 - 60, y: downY}   // تحت يمين
+      ];
+    }
+    let imgPositions = getImgPositions();
+    const imgs = [
+      document.getElementById('img0'),
+      document.getElementById('img1'),
+      document.getElementById('img2'),
+      document.getElementById('img3')
+    ];
+    function placeImages() {
+      imgPositions = getImgPositions();
+      imgs.forEach((img, i) => {
+        img.style.left = imgPositions[i].x + 'px';
+        img.style.top = imgPositions[i].y + 'px';
+      });
+    }
+    placeImages();
+
+    // الطائرة الورقية - حركة مستقيمة أفقيًا في منتصف sky
+    const kite = document.getElementById('kite');
+    function getSkyRect() {
+      return document.getElementById('sky').getBoundingClientRect();
+    }
+    let skyRect = getSkyRect();
+    let kiteX = skyRect.width * 0.1;
+    let kiteY = skyRect.height * 0.5;
+    let velocity = 0;
+    let targetVelocity = 0;
+    const maxVelocity = 3;
+    const friction = 0.96;
+    let frame = 0;
+
+    function getImageCenters() {
+      return imgPositions.map(p => ({
+        x: p.x + 60,
+        y: p.y + 60
+      }));
+    }
+
+    function animateKite() {
+      if (!countdownDone) {
+        requestAnimationFrame(animateKite);
+        return;
+      }
+      skyRect = getSkyRect();
+
+      velocity += (targetVelocity - velocity) * 0.18;
+      if (targetVelocity === 0) velocity *= friction;
+      if (Math.abs(velocity) < 0.05) velocity = 0;
+
+      kiteX += velocity;
+      const minX = skyRect.width * 0.1;
+      const maxX = skyRect.width * 0.9;
+      if (kiteX < minX) kiteX = minX;
+      if (kiteX > maxX) kiteX = maxX;
+
+      frame += 1;
+      const circleY = 18 * Math.sin(frame * 0.045);
+      const circleX = 12 * Math.cos(frame * 0.025);
+
+      kite.style.left = (kiteX + circleX - 50) + 'px';
+      kite.style.top = (kiteY + circleY - 50) + 'px';
+      kite.style.transform = `rotate(${Math.atan2(circleY, velocity + 0.1) * 40}deg)`;
+
+      // إظهار صورة واحدة فقط عند مرور الطائرة بجانبها
+      let centers = getImageCenters();
+      let currentImg = -1;
+      let minDist = 120;
+      for (let i = 0; i < centers.length; i++) {
+        if (Math.abs(kiteX - centers[i].x) < minDist) {
+          currentImg = i;
+          break;
+        }
+      }
+      imgs.forEach((img, i) => {
+        img.classList.toggle('active', i === currentImg);
+      });
+
+      requestAnimationFrame(animateKite);
+    }
+
+    // تحكم باللمس/الماوس
+    function setDirection(dir) {
+      if (dir === 'forward') {
+        targetVelocity = maxVelocity;
+      } else if (dir === 'backward') {
+        targetVelocity = -maxVelocity;
+      }
+    }
+    function stopMove() {
+      targetVelocity = 0;
+    }
+
+    document.getElementById('sky').addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        const x = e.touches[0].clientX - getSkyRect().left;
+        if (x > getSkyRect().width / 2) {
+          setDirection('forward');
+        } else {
+          setDirection('backward');
+        }
+      }
+    });
+    document.getElementById('sky').addEventListener('touchend', stopMove);
+
+    document.getElementById('sky').addEventListener('mousedown', function(e) {
+      if (e.button === 0) {
+        const x = e.clientX - getSkyRect().left;
+        if (x > getSkyRect().width / 2) {
+          setDirection('forward');
+        } else {
+          setDirection('backward');
+        }
+      }
+    });
+    document.getElementById('sky').addEventListener('mouseup', stopMove);
+
+    window.addEventListener('resize', () => {
+      placeImages();
+      skyRect = getSkyRect();
+      kiteY = skyRect.height * 0.5;
+    });
+
+    animateKite();
+  </script>
+</body>
+</html>
